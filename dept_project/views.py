@@ -40,3 +40,7 @@ def error(request):
 
 def login_render(request):
     return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/login.html")
+
+
+def teacher_login_render(request):
+    return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/teacher_login.html")
