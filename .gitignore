@@ -166,3 +166,4 @@ cython_debug/
 /static
 
 .vscode/
+proj_mgmt/__pycache__
