@@ -7,7 +7,7 @@ pwd=''
 def loginaction(request):
     global em,pwd
     if request.method=="POST":
-        m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='department_project_mgmt')
+        m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
         cursor=m.cursor()
         d=request.POST
         for key,value in d.items():
@@ -22,8 +22,6 @@ def loginaction(request):
         t=tuple(cursor.fetchall())
         if t==():
             messages.info(request, 'Invalid Credentials')
-            # error_render = error(request)
-            # return error_render
         else:
             dashboard_render = stud_dashboard(request)
             return dashboard_render
