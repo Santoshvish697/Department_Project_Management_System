@@ -3,9 +3,16 @@ import mysql.connector as sql
 from django.contrib import messages
 em=''
 pwd=''
+
+def home(request):
+    return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/index.html")
+def login_redirect(request):
+    return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/login.html")
+
 # Create your views here.
 def loginaction(request):
     global em,pwd
+    print("Connecting")
     if request.method=="POST":
         m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
         cursor=m.cursor()

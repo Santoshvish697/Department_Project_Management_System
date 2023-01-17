@@ -17,10 +17,11 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import path,include
 from dept_project import views
-from dept_project.views import loginaction
+from dept_project.views import loginaction,home
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include('dept_project.urls')),
-    path("student_login/",loginaction)
+    path("student_login/",loginaction),
+    path("home/",home)
 ]
