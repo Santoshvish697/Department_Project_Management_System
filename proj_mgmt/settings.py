@@ -82,7 +82,10 @@ DATABASES = {
         "USER": "root",
         "PASSWORD":"root",
         "PORT": 3306,
-        "HOST": '127.0.0.1'
+        "HOST": "127.0.0.1"
+        # "OPTIONS":{
+        #     'init_command': "SET sql_node='STRICT_TRANS_TABLES'"
+        # }
     }
 }
 
