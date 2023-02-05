@@ -43,7 +43,7 @@ def loginaction(request):
         if t==():
             messages.info(request, 'Invalid Credentials')
         else:
-            dashboard_render = stud_dashboard(request)
+            dashboard_render = stud_dashboard_render(request)
             return dashboard_render
 
     return login_render(request)
@@ -69,7 +69,7 @@ def teacher_login_render(request):
         if t==():
             messages.info(request, 'Invalid Credentials')
         else:
-            dashboard_render = teacher_dashboard(request)
+            dashboard_render = guide_dashboard_render(request)
             return dashboard_render
     return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/teacher_login.html")
 
@@ -150,22 +150,6 @@ def teacher_form(request):
         except:
             messages.error(request,"Response Already Recorded or Email Not Registered!")
     return teacher_form_render(request)
-                
-    #     if d.get('usn') and d.get('fname') and d.get('mname') and d.get('lname') and d.get('email') and d.get('phone_no'):
-    #         saverecord = student_input()
-    #         saverecord.usn = d.get('usn')
-    #         saverecord.fname = d.get('first-name')
-    #         saverecord.mname = d.get('middle-name')
-    #         saverecord.lname = d.get('last-name')
-    #         saverecord.email = d.get('email')
-    #         saverecord.phone_no = d.get('phone')
-    #         saverecord.save()
-    #         cursor.execute("INSERT INTO STUDENT (USN,First_Name,Middle_Name,Last_Name,Email,Phone_no) VALUES ({},{},{},{},{},{})".format(saverecord.usn,saverecord.fname,saverecord.mname,saverecord.lname,saverecord.email,saverecord.phone_no))
-    #         m.commit()
-    #         messages.success(request,"Details Entered Successfully!")
-    # return student_form_render(request)
-
-
 
 def show_table(request):
     m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
@@ -180,8 +164,16 @@ def update_project_details(request):
     cursor = m.cursor()
     cursor.execute("SELECT D.PROJECT_TITLE,D.PROJECT_DOMAIN,G.FIRST_NAME,G.LAST_NAME FROM DELIVERABLE_PROJECT AS D,STUDENT AS S,USERS AS U,PANEL_ALLOT AS P,GUIDE AS G WHERE D.USN = S.USN AND S.EMAIL = U.EMAIL AND D.PANEL_ID = P.PANEL_ID AND G.GUIDE_ID = P.GUIDE_ID AND U.EMAIL = '{}';".format(login_obj.email))
     title = cursor.fetchall()
+    print(title)
     return render(request,'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/stud_dashboard.html',{'title': title})
 
+def teacher_details_update(request):
+    m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+    cursor = m.cursor()
+    cursor.execute("SELECT FIRST_NAME AS GUIDE_FIRST_NAME,LAST_NAME AS GUIDE_LAST_NAME FROM GUIDE AS G,USERS AS U WHERE G.EMAIL = U.EMAIL AND EMAIL = {};".format(login_obj.email))
+    name = cursor.fetchall()
+    return render(request,'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/stud_dashboard.html',{'name': name})
+    
 
 def stud_dashboard(request):
     dashboard_render = render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/stud_dashboard.html")
@@ -205,3 +197,18 @@ def student_form_render(request):
 
 def teacher_form_render(request):
     return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/guide_form.html")
+
+
+def stud_dashboard_render(request):
+    return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/demo.html")
+
+
+def view_submissions(request):
+    return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/stud_dashboard.html")
+
+def guide_dashboard_render(request):
+    return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/teacher_dashboard.html")
+
+
+def view_checked_submissions(request):
+    return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/teachers_dashboard.html")

@@ -86,6 +86,17 @@ class internship_guide():
     fname = models.CharField(max_length=25)
     mname = models.CharField(max_length=25)
     lname = models.CharField(max_length=25)
+    company = models.CharField(max_length=25)
+    doj = models.DateField()
+    class Meta:
+        db_table = 'INTERNSHIP_GUIDE'
+
+
+class panel_allot(models.Model):
+    allot_num = models.AutoField(primary_key=True)
+    guide_ID = models.ForeignKey(guide,on_delete=models.CASCADE)
+    panel_ID = models.ForeignKey(panel_members,on_delete=models.CASCADE)
+
     
 
 '''
