@@ -6,57 +6,20 @@ Update Student
     <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
-          <div class="row">
-              <div class="col-md-12">
-            <!-- general form elements -->
-            <div class="card card-primary">
-              <div class="card-header">
-                <h3 class="card-title">Add Student</h3>
-              </div>
-              <!-- /.card-header -->
-              <!-- form start -->
-              <form role="form" action="*" method="post">
-                  {% csrf_token %}
-                <div class="card-body">
-                  <div class="form-group">
-                    <label>USN Number:</label>
-                    <input type="hidden" class="form-control" name="usn" value = " {{ student.id }}" placeholder="">
-                  </div>
-                   <div class="form-group">
-                    <label>First Name:</label>
-                    <input type="text" class="form-control" name="fname" value="{{ student.fname }}" placeholder="{{ item.0 }}" required>
-                    </div>
-                    <div class="form-group">
-                      <label>Middle Name:</label>
-                      <input type="text" class="form-control" name="mname" value = "{{ student.mname }}" placeholder="{{ item.1 }}">
-                    </div>
-                    <div class="form-group">
-                      <label>Last Name:</label>
-                      <input type="text" class="form-control" name="lname" value = "{{ student.lname }}" placeholder="{{ student.lname }}" required>
-                    </div>
-                    <div class = "form-group">
-                      <label>Email:</label>
-                      <input type = "email" class = "form-control"  name="email" value = "{{ student.email }}" placeholder="{{ student.email }}" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="phone">Phone Number:</label>
-                      <input type="tel" pattern="\d{10}" name="phone" value = "{{ student.Phone_no }}" placeholder = "{{ student.Phone_no }}" class = "form-control" required>
-                    </div>
-                  </div>
-                </div>
-                <!-- /.card-body -->
-                <div class="card-footer">
-                  <button type="submit" class="btn btn-primary btn-block">Update Student</button>
-                </div>
-              </form>
-            </div>
-            <!-- /.card -->
-
-
-
+        <h2 style="text-align:center"> Edit Blog </h2>
+        <form method="POST" >
+          <div class = "form-group">
+            <label><b>USN:</b></label>
+            {{form.usn}}
           </div>
+          <div class = "form-group">
+            <label><b></b></label>
           </div>
-      </div>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" class="btn btn-success">
+        </form>
+        </div>
     </section>
     <!-- /.content -->
 {% endblock main_content %}

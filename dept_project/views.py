@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 import mysql.connector as sql
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
@@ -349,7 +349,11 @@ def panel_allot_render(request):
     cursor = m.cursor()
     cursor.execute("SELECT USN FROM PANEL_MEMBERS;".format)
     usn_reg = cursor.fetchall()
-    return render(request,'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/add_panel_allot.html',{'name': usn_reg})
+    return render(request,'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/add_panel_allot.html')
+
+def ret_stud_data(request):
+    students = student_input.objects.all()
+    return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/update_stud.html")
 
 def error(request):
     return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/error.html")
@@ -395,3 +399,7 @@ def update_student_update_table(request):
     if (student_details_render != None):
         table_render = update_student_details(request)
     return table_render
+
+def update_student_detail(request):
+    if request.method == "POST":
+     m = mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
