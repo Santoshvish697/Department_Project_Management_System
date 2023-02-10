@@ -1,3 +1,4 @@
+{% extends 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/base_template.html' %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -140,38 +141,14 @@
 </head>
 <body>
   {% csrf_token %}
-  <div id="wrapper">
-    <!-- Sidebar -->
-    <div id="sidebar-wrapper">
-        <ul class="sidebar-nav">
-            <li class="sidebar-brand">
-                <a href="#">
-                    Amit Agarwal
-                </a>
-            </li>
-            <li>
-                <a href="#">Evaluate Submissions</a>
-            </li>
-            <li>
-                <a href="#">Give Assignments</a>
-            </li>
-            <li>
-                <a href = "#">Diary Entry</a>
-            </li>
-            <li>
-                <a href="#">Settings</a>
-            </li>
-        </ul>
-    </div>
-    <!-- /#sidebar-wrapper -->
-
+    {% block main_content%}
     <!-- Page Content -->
     <div id="page-content-wrapper">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
                     <div class = "header_background">
-                        <center><h1>TEACHERS DASHBOARD</h1></center>
+                        <center><h1>VIEW ON-TIME SUBMISSIONS</h1></center>
                     </div>
                     <h3>Panel Assignment - 100</h3>
                     <h3>Project Details</h3>
@@ -198,12 +175,11 @@
                         </tbody>
                       </table>
                 </div>
-                <a href='/teachers_form'><button type="button" class="btn btn-success">Fill Guide Form</button></a>
             </div>
         </div>
     </div>
     <!-- /#page-content-wrapper -->
-
+    {% endblock main_content %}
 </div>
 <!-- /#wrapper -->
 <script src="{% static 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/js/dashboard_style.js' %}"></script>

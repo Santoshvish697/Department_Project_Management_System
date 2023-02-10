@@ -1,10 +1,9 @@
 from django.shortcuts import render
 import mysql.connector as sql
 from django.contrib import messages
-
+from django.http import HttpResponse, HttpResponseRedirect
 from dept_project.models import student_input,phase_allot,deliverable_project,diary,panel_members,users,guide
 from django.contrib import messages
-
 import mysql.connector
 
 
@@ -73,6 +72,34 @@ def teacher_login_render(request):
             return dashboard_render
     return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/teacher_login.html")
 
+def admin_login(request):
+        global em,pwd
+        print("Connecting")
+        if request.method=="POST":
+            m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+            cursor=m.cursor()
+            d=request.POST
+            for key,value in d.items():
+                if key=="email":
+                    em=value
+                if key=="password":
+                    pwd=value
+            c="select * from USERS AS U where U.EMAIL = 'ise2020@rvce.edu.in' and U.PASSWORD ='{}'".format(pwd)
+            print(c)
+            cursor.execute(c)
+            login_obj.email = em
+            login_obj.pwd = pwd
+            t=tuple(cursor.fetchall())
+            if t==():
+                messages.info(request, 'Invalid Credentials')
+            else:
+                dashboard_render = admin_dashboard(request)
+                return dashboard_render
+        return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/teacher_login.html")
+
+def admin_dashboard(request):
+    return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/admin_dashboard.html")
+
 def teacher_dashboard(request):
     teacher_dashboard_render = render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/teachers_dashboard.html")
     if (teacher_dashboard_render != None):
@@ -116,9 +143,13 @@ def student_form(request):
             messages.success(request,"Details Entered Successfully!")
         except:
             messages.error(request,"Response Recorded or Email Not Registered!")
-    return student_form_render(request)
+    return add_student_render(request)
 
+def add_student_render(request):
+    return render(request,'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/add_student.html')
 
+def form_view(request):
+    return render(request,'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/update_student_detail.html')
 
 def teacher_form(request):
     if request.method == 'POST':
@@ -184,6 +215,141 @@ def stud_dashboard(request):
                 return table_render
     return detail_render
 
+def add_user_render(request):
+    return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/add_user.html")
+
+def add_user_save(request):
+    if request.method=="POST":
+        m=mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+        print("Connecting........")
+        cursor=m.cursor()
+        d=request.POST
+        print("Inserting the values...")
+        saverecord = users()
+        for key,value in d.items():
+            if key == 'email':
+                saverecord.email = d.get('email')
+            if key == 'password':
+                saverecord.pwd = d.get('password')
+        try:
+            insert_str = "INSERT INTO USERS (EMAIL,PASSWORD) VALUES ('{}','{}')".format(saverecord.email,saverecord.pwd)
+            cursor.execute(insert_str)
+            m.commit()
+            m.close()
+            messages.success(request,"Details Entered Successfully!")
+        except:
+            messages.error(request,"Error")
+            user_render = add_user_render(request)
+            return user_render
+    return add_user_render(request)
+
+
+#UPDATE DB OPERATIONS
+def update_student_render(request):
+    update_student_detail_render = render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/update_student_detail.html")
+    if (update_student_detail_render != None):
+        search_render = search_student_details(request)
+        if(search_render != None):
+            update_student_submit = update_student(request)
+        return search_render
+      
+def search_student_details(request):
+    if request.method == "POST":
+        m = mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+        print("Connected to DB")
+        cursor = m.cursor()
+        d = request.POST
+        saverecord = student_input()
+        for key,value in d.items():
+            if key == 'usn':
+                saverecord.usn = d.get('usn')
+        try:
+            print(saverecord.usn)
+            search_str = "SELECT FIRST_NAME,MIDDLE_NAME,LAST_NAME,EMAIL,PHONE_NO,USN FROM STUDENT WHERE USN = '{}';".format(saverecord.usn)
+            cursor.execute(search_str)
+            student_form_details = cursor.fetchall()
+            print(student_form_details)
+            if "search_student" in request.POST:
+                return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/update_student_detail.html",{"student_form_data" : student_form_details})
+        except:
+            messages.error(request,"Could Not Render Student Details with this USN")
+            update_view = form_view(request)
+            return update_view
+    return form_view(request)
+
+def update_student(request):
+    if request.method=="POST":
+        m=mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+        cursor=m.cursor()
+        d=request.POST
+        print(em)
+        for key,value in d.items():
+            if key == 'usn':
+                usn_no = d.get('usn')
+                print(usn_no)
+            if key == 'fname':
+                first_name = d.get('fname')
+            if key == 'mname':
+                middle_name = d.get('mname')
+            if key == 'lname':
+                last_name = d.get('lname')
+            if key == 'phone_no':
+                phone_no = d.get('phone_no')
+        try:
+            user = student_input.objects.get(id= usn_no)
+            print("Object Found")
+            user.fname = first_name
+            user.mname = middle_name
+            user.lname = last_name
+            user.phone_no = phone_no
+            user.save()
+            print("Edited!")
+            messages.success(request,"Successfully Edited Student")
+        except:
+            messages.error(request,"Error in Table Updation")
+            user_render = update_table_render(request)
+    return form_view(request)
+ 
+def update_stud(request,id):
+    students = students.objects.get(usn = id)
+    return render(request,'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/update_stud.html',{'students' : students})
+   
+def panel_member_render(request):
+    m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+    cursor = m.cursor()
+    cursor.execute("SELECT * FROM PANEL_MEMBERS;")
+    panel_name = cursor.fetchall()
+    return render(request,'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/panel_allotment.html',{'panel_allot': panel_name})
+
+
+def add_panel_allot(request):
+    if request.method=="POST":
+        m=mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+        cursor=m.cursor()
+        d=request.POST
+        for key,value in d.items():
+            if key == 'panel_id':
+                panel_id = d.get('panel_id')
+            if key == 'usn':
+                usn = d.get('usn')
+        try:
+            insert_str = "INSERT INTO PANEL_MEMBERS (PANEL_ID,USN) VALUES ('{}','{}')".format(panel_id,usn)
+            cursor.execute(insert_str)
+            m.commit()
+            m.close()
+            messages.success(request,"Details Entered Successfully!")
+        except:
+            messages.error(request,"Error")
+            user_render = add_user_render(request)
+            return user_render
+    return panel_allot_render(request)
+ 
+def panel_allot_render(request):
+    m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+    cursor = m.cursor()
+    cursor.execute("SELECT USN FROM PANEL_MEMBERS;".format)
+    usn_reg = cursor.fetchall()
+    return render(request,'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/add_panel_allot.html',{'name': usn_reg})
 
 def error(request):
     return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/error.html")
@@ -212,3 +378,20 @@ def guide_dashboard_render(request):
 
 def view_checked_submissions(request):
     return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/teachers_dashboard.html")
+
+
+def update_table_render(request):
+    return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/update_student.html")
+    
+def update_student_details(request):
+    m=mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+    cursor = m.cursor()
+    cursor.execute("SELECT * FROM STUDENT;")
+    student_details = cursor.fetchall()
+    return render(request,'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/update_student.html',{'stud_details': student_details})
+    
+def update_student_update_table(request):
+    student_details_render = render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/update_student.html")
+    if (student_details_render != None):
+        table_render = update_student_details(request)
+    return table_render

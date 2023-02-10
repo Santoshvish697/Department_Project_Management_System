@@ -1,214 +1,44 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>View Submissions</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-  <link rel = "stylesheet" href='{% static "DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/css/dashboard_style.css" %}'/>
-  <style>
-    body {
-    overflow-x: hidden;
- }
-
- .header-background
- {
-    background-color: yellow;
- }
-/* Toggle Styles */
-
-#wrapper {
-    padding-left: 0;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
-}
-
-#wrapper.toggled {
-    padding-left: 250px;
-}
-
-#sidebar-wrapper {
-    z-index: 1000;
-    position: fixed;
-    left: 250px;
-    width: 0;
-    height: 100%;
-    margin-left: -250px;
-    overflow-y: auto;
-    background: #000;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
-}
-
-#wrapper.toggled #sidebar-wrapper {
-    width: 250px;
-}
-
-#page-content-wrapper {
-    width: 100%;
-    position: absolute;
-    padding: 15px;
-}
-
-#wrapper.toggled #page-content-wrapper {
-    position: absolute;
-    margin-right: -250px;
-}
-
-/* Sidebar Styles */
-
-.sidebar-nav {
-    position: absolute;
-    top: 0;
-    width: 250px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.sidebar-nav li {
-    text-indent: 20px;
-    line-height: 40px;
-}
-
-.sidebar-nav li a {
-    display: block;
-    text-decoration: none;
-    color: #999999;
-}
-
-.sidebar-nav li a:hover {
-    text-decoration: none;
-    color: #fff;
-    background: rgba(255,255,255,0.2);
-}
-
-.sidebar-nav li a:active,
-.sidebar-nav li a:focus {
-    text-decoration: none;
-}
-
-.sidebar-nav > .sidebar-brand {
-    height: 65px;
-    font-size: 18px;
-    line-height: 60px;
-}
-
-.sidebar-nav > .sidebar-brand a {
-    color: #999999;
-}
-
-.sidebar-nav > .sidebar-brand a:hover {
-    color: #fff;
-    background: none;
-}
-
-@media(min-width:768px) {
-    #wrapper {
-        padding-left: 250px;
-    }
-
-    #wrapper.toggled {
-        padding-left: 0;
-    }
-
-    #sidebar-wrapper {
-        width: 250px;
-    }
-
-    #wrapper.toggled #sidebar-wrapper {
-        width: 0;
-    }
-
-    #page-content-wrapper {
-        padding: 20px;
-        position: relative;
-    }
-
-    #wrapper.toggled #page-content-wrapper {
-        position: relative;
-        margin-right: 0;
-    }
-}
-  </style>
-</head>
-<body>
-  {% csrf_token %}
-  <div id="wrapper">
-    <!-- Sidebar -->
-    <div id="sidebar-wrapper">
-        <ul class="sidebar-nav">
-            <li class="sidebar-brand">
-                <a href="#">
-                    Santosh
-                </a>
-            </li>
-            <li>
-                <a href="#">Add Submission</a>
-            </li>
-            <li>
-                <a href="#">Check Submissions</a>
-            </li>
-            <li>
-                <a href="#">Notices and Events</a>
-            </li>
-            <li>
-                <a href="#">Settings</a>
-            </li>
-        </ul>
-    </div>
-    <!-- /#sidebar-wrapper -->
-
-    <!-- Page Content -->
-    <div id="page-content-wrapper">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class = "header_background">
-                        <center><h1>STUDENT DASHBOARD</h1></center>
-                    </div>
-                    {% for item in title%}
-                    <h3>{{ item.0 }}</h3>
-                    <h3>Project Domain: {{ item.1 }}</h3>
-                    <h3>Guide: Prof. {{ item.2 }} {{ item.3 }}</h3>
-                    {% endfor %}
-                    <h3>Recent Submissions</h3>
-                    <table class="table">
-                        <thead class="thead-dark"> 
-                          <tr>
-                            <th scope="col">Project Phase</th>
-                            <th scope = "col">DUE DATE</th>
-                            <th scope="col">Submission Status</th>
-                            <th>View Grade</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            {% for item in data%}
-                            <td>{{ item.0 }}</td>
-                            <td>{{ item.1 }}</td>
-                            <td><h5 style="color: red;">{{ item.2 }}</h5></td>
-                            <td><a href = "#">View Grade</a></td>
-                          </tr>
-                          {% endfor %}
-                        </tbody>
-                      </table>
+{% extends 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/base_student_template.html' %}
+{% block page_title %}
+View Submissions
+{% endblock page_title %}
+{% block main_content %}
+{% csrf_token %}
+<!-- Page Content -->
+<div id="page-content-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class = "header_background">
                 </div>
-                <a href='/student_form'><button type="button" class="btn btn-success">Fill Student Form</button></a>
+                {% for item in title%}
+                <h3>{{ item.0 }}</h3>
+                <h3>Project Domain: {{ item.1 }}</h3>
+                <h3>Guide: Prof. {{ item.2 }} {{ item.3 }}</h3>
+                {% endfor %}
+                <h3>Recent Submissions</h3>
+                <table class="table">
+                    <thead class="thead-dark"> 
+                        <tr>
+                        <th scope="col">Project Phase</th>
+                        <th scope = "col">DUE DATE</th>
+                        <th scope="col">Submission Status</th>
+                        <th>View Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                        {% for item in data%}
+                        <td>{{ item.0 }}</td>
+                        <td>{{ item.1 }}</td>
+                        <td><h5 style="color: red;">{{ item.2 }}</h5></td>
+                        <td><a href = "#">View Grade</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
             </div>
         </div>
     </div>
-    <!-- /#page-content-wrapper -->
-
 </div>
-<!-- /#wrapper -->
-<script src="{% static 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/js/dashboard_style.js' %}"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-</body>
-</html>
+{% endblock main_content %}
