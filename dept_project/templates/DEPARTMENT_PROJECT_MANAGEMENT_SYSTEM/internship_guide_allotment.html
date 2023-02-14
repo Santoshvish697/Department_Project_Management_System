@@ -1,0 +1,50 @@
+{% extends 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/base_admin_template.html' %}
+{% block page_title %}
+Update Internship Guide
+{% endblock page_title %}
+{% block main_content %}
+<!-- /.row -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Students</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body table-responsive p-0" style="height: 300px;">
+            <table class="table table-head-fixed text-nowrap">
+            <thead>
+                <tr>
+                <th>Intern ID</th>
+                <th>First Name</th>
+                <th>Middle Name</th>
+                <th>Last Name</th>
+                <th>COMPANY</th>
+                <th>DOJ</th> 
+                <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                {% for item in intern %}
+                <td>{{ item.0 }}</td>
+                <td>{{ item.1 }}</td>
+                <td>{{ item.2 }}</td>
+                <td>{{ item.3 }}</td>
+                <td>{{ item.4 }}</td>
+                <td>{{ item.5 }}</td>
+                <td><a href = "/edit_intern_allot/{{ item.0 }}"><button type="button" class="btn btn-danger" name = "update_intern">Update</button></a></td>
+                <td></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+        <div class="card-footer">
+            <a href="/add_intern_allot"><button type="submit" name = "add_intern" class="btn btn-primary btn-block">Add Intern</button></a>
+          </div>
+        </div>
+        <!-- /.card -->
+    </div>
+    </div>
+{% endblock main_content %}

@@ -1,0 +1,55 @@
+{% extends 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/base_admin_template.html' %}
+{% block page_title %}
+Panel Allot
+{% endblock page_title %}
+{% block main_content %}
+<!-- /.row -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Panel Allotment</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body table-responsive p-0" style="height: 300px;">
+            <table class="table table-head-fixed text-nowrap">
+            <thead>
+                <tr>
+                <th>Panel_ID</th>
+                <th>USN</th>
+                <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                {% for item in panel_allot %}
+                <td>{{ item.0 }}</td>
+                <td>{{ item.1 }}</td>
+                <td><a href = "/edit_panel_allot/{{ item.1 }}"><button type="button" class="btn btn-danger" name = "update_student">Update</button></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+        <div class="form-group">
+            {% if messages %}
+              {% for message in messages %}
+              {% if message.tags == 'error' %}
+              <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
+              {% endif %}
+              {% if message.tags == 'success' %}
+              <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
+              {% endif %}
+              {% endfor %}
+            {% endif %}
+          </div>
+          <div class="card-footer">
+            <a href = "/add_panel_allot"><button type="submit" name = "Add Allotment" class="btn btn-primary btn-block">Add Panel Allotment</button></a>
+          </div>
+        <!-- /.card-body -->
+        </div>
+
+        <!-- /.card -->
+    </div>
+    </div>
+{% endblock main_content %}

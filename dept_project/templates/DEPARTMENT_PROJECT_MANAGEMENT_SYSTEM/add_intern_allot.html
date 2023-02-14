@@ -1,0 +1,67 @@
+{% extends 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/base_admin_template.html' %}
+{% block page_title %}
+Add Internship Details
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-12">
+            <!-- general form elements -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Add Intern Allot</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+              <form role="form" action="/update_intern_allot/" method="post">
+                  {% csrf_token %}
+                <div class="card-body">
+                  <div class="form-group">
+                    <label>Intern ID:</label>
+                    <input type="text" class="form-control" name="intern_id"  placeholder="Enter Intern ID" required>
+                    </div>
+                   <div class="form-group">
+                    <label>Manager FName</label>
+                    <input type="text" class="form-control" name="fname" placeholder="Enter Manager First Name" required>
+                    </div>
+                    <div class="form-group">
+                      <label>Manager Mname:</label>
+                      <input type="text" class="form-control" name="mname" placeholder="Enter Manager Middle Name">
+                    </div>
+                    <div class="form-group">
+                      <label>Manager Lname:</label>
+                      <input type="text" class="form-control" name="lname" placeholder="Enter Manager First Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Company:</label>
+                        <input type="text" class="form-control" name="company" placeholder="Enter Company" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="datefield">Date of Joining (DOJ):</label>
+                      <input type="date" id = "datefield" name="doj" placeholder = "Enter Date-of-Joining (DOJ)" class = "form-control" required>
+                    </div>
+                  </div>
+                </div>
+                <a><button type="submit" name = "update_student" class="btn btn-primary btn-block">Update Intern Allot</button></a>
+              </form>
+          </div>
+          <div class="form-group">
+            {% if messages %}
+              {% for message in messages %}
+              {% if message.tags == 'error' %}
+              <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
+              {% endif %}
+              {% if message.tags == 'success' %}
+              <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
+              {% endif %}
+              {% endfor %}
+            {% endif %}
+          </div>
+          </div>
+      </div>
+    </section>
+    <!-- /.content -->
+{% endblock main_content %}
+
