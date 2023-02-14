@@ -23,6 +23,8 @@ media
 # C extensions
 *.so
 
+dept_project/DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/upload/
+
 # Distribution / packaging
 .Python
 build/
