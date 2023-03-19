@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Student Dashboard</title>
-  <!-- Tell the browser to be responsive to screen width -->
+  <!-- Tell the browser to be to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Font Awesome -->
   <link rel="stylesheet" href= "{% static 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/plugins/fontawesome-free/css/all.min.css' %}">
@@ -228,29 +228,6 @@
           </li>
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-tree"></i>
-              <p>
-                Setup Account
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="/student_form" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Student Form</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Project Details</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-item has-treeview">
-            <a href="#" class="nav-link">
               <i class="nav-icon fas fa-edit"></i>
               <p>
                 View Report
@@ -271,21 +248,11 @@
                 </a>
             </ul>
           </li>
-          <li class="nav-item">
-            <a href="pages/calendar.html" class="nav-link">
-              <i class="nav-icon far fa-calendar-alt"></i>
-              <p>
-                Calendar
-                <span class="badge badge-info right">2</span>
-              </p>
-            </a>
-          </li>
           <li class="nav-item has-treeview">
-            <a href="#" class="nav-link">
+            <a href="/" name = "LOGOUT" class="nav-link">
               <i class="nav-icon far fa-envelope"></i>
               <p>
-                Mail Us
-                <i class="fas fa-angle-left right"></i>
+                Logout
               </p>
             </a>
           </li>
@@ -389,6 +356,7 @@
             </div>
             <!-- /.row -->
             <!-- Main row -->
+            <marquee>LAST DATE TO SUBMIT PROJECT IS 18/2/23 </marquee>
             <div class="row">
               <!-- Left col -->
               <section class="col-lg-7 connectedSortable">
@@ -422,7 +390,8 @@
                       </div>  
                     </div>
                   </div><!-- /.card-body -->
-                </div>
+                </div>/
+                
                 <!-- /.card -->
     
                 <!-- DIRECT CHAT -->

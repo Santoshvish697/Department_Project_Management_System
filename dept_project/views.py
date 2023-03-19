@@ -13,7 +13,8 @@ import base64
 from PIL import Image
 import random
 from django.core.files.storage import FileSystemStorage
-# from models import student_input
+from django.core.mail import send_mail
+from django.conf import settings
 
 em=''
 pwd=''
@@ -27,6 +28,19 @@ def login_redirect(request):
     
 
 # Create your views here.
+def email(request,):
+    if request.method == 'POST':
+        message = request.POST['message']
+        email = request.POST['email']
+        name = request.POST['name']
+        send_mail(
+            name ,#title
+            message, #message
+            'settings.EMAIL_HOST_USER', #sender if not available considered the default
+            [email], #receiver email
+            fail_silently=False)
+    return render(request, 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/email_integ.html')
+    
 def loginaction(request):
     global em,pwd
     print("Connecting")
@@ -124,7 +138,7 @@ def teacher_dashboard(request):
 def teacher_table_render(request):
     m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
     cursor=m.cursor()
-    cursor.execute("SELECT S.USN, S.FIRST_NAME AS STUDENT_FIRST_NAME, S.LAST_NAME AS STUDENT_LAST_NAME, D.PROJECT_TITLE, D.PROJECT_DOMAIN FROM STUDENT AS S, DELIVERABLE_PROJECT AS D, GUIDE AS G, PANEL_ALLOT AS PA WHERE S.USN = D.USN AND G.USN = S.USN AND G.PROJECT_ID = D.PROJECT_ID AND PA.PANEL_ID = D.PANEL_ID;")
+    cursor.execute("SELECT F.SUB_ID,F.USN,ST.FIRST_NAME,ST.LAST_NAME,F.PHASE_NO,SC.PHASE_DESC,T.SUB_STATUS FROM FILE_SUB AS F,STUDENT AS ST,TRANSACTIONS AS T,SCHEDULE AS SC,GUIDE AS G WHERE F.USN = ST.USN AND F.PHASE_NO = SC.PHASE_NO AND T.SUB_ID = F.SUB_ID AND G.USN = ST.USN AND G.EMAIL = 'amit@rvce.edu.in';;")
     teacher_data = cursor.fetchall()
     print(teacher_data)
     return render(request, 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/teachers_dashboard.html', {'teacher_data': teacher_data})
@@ -200,7 +214,7 @@ def teacher_form(request):
 def show_table(request):
     m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
     cursor=m.cursor()
-    cursor.execute("SELECT S.PHASE_NO,S.PHASE_DESC,T.SUBMITTED_AT,T.SUB_STATUS FROM SCHEDULE AS S,TRANSACTIONS AS T,FILE_SUB AS F,PHASE_ALLOT AS PA, DELIVERABLE_PROJECT AS D WHERE S.PHASE_NO = F.PHASE_NO AND T.SUB_ID = PA.PHASE_ID AND F.USN = D.USN;")
+    cursor.execute("SELECT F.SUB_ID,F.USN,ST.FIRST_NAME,ST.LAST_NAME,F.PHASE_NO,SC.PHASE_DESC,T.SUB_STATUS FROM FILE_SUB AS F,STUDENT AS ST,TRANSACTIONS AS T,SCHEDULE AS SC,GUIDE AS G WHERE F.USN = ST.USN AND F.PHASE_NO = SC.PHASE_NO AND T.SUB_ID = F.SUB_ID AND G.USN = ST.USN AND ST.EMAIL = '{}';".format(login_obj.email))
     data = cursor.fetchall()
     return render(request, 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/stud_dashboard.html', {'data': data})
 
@@ -631,7 +645,7 @@ def submit_render(request):
                 return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/add_submission.html")
     return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/add_submission.html")
 
-
+submission_obj = SubmitForm(instance=file_submit)
 
 def upload_file(request):
     if request.method == 'POST':
@@ -639,18 +653,22 @@ def upload_file(request):
         if form.is_valid():
             try:
              print("File Valid")
-             form.save()
+             submission_obj = form.save(commit=False)
              messages.success(request,"Updated Record Successfully")
+             submission_obj.save()
             except:
              messages.error(request,"Failed to upload file")
     else:
         form = SubmitForm()
     return render(request, 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/add_submission.html', {'form': form})
 
+
+
+
 def unchecked_table_render(request):
     m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
     cursor=m.cursor()
-    cursor.execute("SELECT F.SUB_ID,S.PHASE_NO,S.PHASE_DESC,T.SUBMITTED_AT FROM SCHEDULE AS S,TRANSACTIONS AS T,FILE_SUB AS F,PHASE_ALLOT AS PA, DELIVERABLE_PROJECT AS D WHERE S.PHASE_NO = F.PHASE_NO AND T.SUB_ID = PA.PHASE_ID AND F.USN = D.USN;")
+    cursor.execute("SELECT F.SUB_ID,S.PHASE_NO,S.PHASE_DESC,T.SUBMITTED_AT FROM SCHEDULE AS S,TRANSACTIONS AS T,FILE_SUB AS F,PHASE_ALLOT AS PA, DELIVERABLE_PROJECT AS D WHERE S.PHASE_NO = F.PHASE_NO AND T.SUB_ID = PA.PHASE_ID AND F.USN = D.USN AND T.SUB_ID = F.SUB_ID;")
     unchecked = cursor.fetchall()
     return render(request, 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/unchecked_view_assignment.html', {'unchecked_view_data': unchecked})
 
@@ -673,7 +691,8 @@ def update_file(request,id):
         form = SubmitForm(request.POST, request.FILES,instance=files)
         if form.is_valid():
             doc_file = request.FILES
-            file_instance = file_submit(file=doc_file['file'])
+            file_instance = file_submit(file=doc_file['file'],sub_id = id)
+            print(file_instance)
             try:
              file_instance.save()
              messages.success(request,"Updated Successfully!")
@@ -682,7 +701,164 @@ def update_file(request,id):
     else:
         form = SubmitForm(instance = files)
     return render(request, 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/unchecked_view_form.html', {'form': form})
-        
-def update_transactions(request):
+ 
+ 
+def panel_project_render(request):
+    m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+    cursor = m.cursor()
+    cursor.execute("SELECT PROJECT_ID,PROJECT_TITLE,PANEL_ID FROM DELIVERABLE_PROJECT;")
+    panel_name = cursor.fetchall()
+    return render(request,'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/project_panel_allotment.html',{'panel_project_allot': panel_name})
+
+  
+def edit_project_panel_allot(request,id):
+    m = mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+    cursor = m.cursor()
+    print(id)
+    cursor.execute("SELECT PROJECT_ID,PROJECT_TITLE,PANEL_ID FROM DELIVERABLE_PROJECT WHERE PROJECT_ID = '{}';".format(id))
+    panel_project_details = cursor.fetchall()
+    print(list(panel_project_details))
+    return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/update_project_allot.html",{'project_allotment' : panel_project_details})
+
+def panel_project_update(request):
     if request.method == "POST":
-     return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/unchecked_view_form.html")
+        print("YES")
+        m=mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+        cursor=m.cursor()
+        d=request.POST
+        for key,value in d.items():
+            if key == 'project_id':
+                proj_no = d.get('project_id')
+            if key == 'project_name':
+                proj_title = d.get('project_name')
+            if key == 'panel_id':
+                panel_no = d.get('panel_id')
+        try:
+            panel_allot_str = "UPDATE DELIVERABLE_PROJECT SET PANEL_ID = {} WHERE PROJECT_ID = {};".format(proj_no,panel_no)
+            cursor.execute(panel_allot_str)
+            m.commit()
+            m.close()
+            messages.success(request,"Details Entered Successfully!")
+            # redirect(update_student_update_table)
+        except:
+            messages.error(request,"Error")
+    return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/update_project_allot.html")  
+
+
+        
+ 
+def guide_render(request):
+    m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+    cursor = m.cursor()
+    cursor.execute("SELECT GUIDE_ID,FIRST_NAME,MIDDLE_NAME,LAST_NAME,EMAIL,PHONE_NO,USN FROM GUIDE;")
+    guide_details = cursor.fetchall()
+    return render(request,'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/guide_detail.html',{'guide_detail': guide_details})
+
+  
+def edit_guide(request,id):
+    m = mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+    cursor = m.cursor()
+    print(id)
+    cursor.execute("SELECT GUIDE_ID,FIRST_NAME,MIDDLE_NAME,LAST_NAME,EMAIL,PHONE_NO,PROJECT_ID,USN FROM GUIDE WHERE GUIDE_ID = {};".format(id))
+    guide_details = cursor.fetchall()
+    return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/guide_update.html",{'guide_update' : guide_details})
+
+def guide_add_render(request):
+    if request.method == "POST":
+        print("YES")
+        m=mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+        cursor=m.cursor()
+        d=request.POST
+        for key,value in d.items():
+            if key == 'guide_id':
+                id = d.get('guide_id')
+            if key == 'fname':
+                first = d.get('fname')
+            if key == 'fname':
+                middle = d.get('mname')
+            if key == 'lname':
+                last = d.get('lname')
+            if key == 'email':
+                email = d.get('email')
+            if key == 'phone':
+                phone_no = d.get('phone')
+            if key== 'project_id':
+                project_id = d.get('project_id')
+            if key == 'usn':
+                usn_no = d.get('usn')
+        try:
+            guide_str = "INSERT INTO GUIDE VALUES ('{}','{}','{}','{}','{}','{}',{},'{}')".format(id,first,middle,last,key,email,phone_no,project_id,usn_no)
+            cursor.execute(guide_str)
+            m.commit()
+            m.close()
+            messages.success(request,"Details Entered Successfully!")
+            # redirect(update_student_update_table)
+        except:
+            messages.error(request,"Error")
+    return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/add_guide.html")  
+
+def unchecked_submissions_render(request):
+    m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+    cursor=m.cursor()
+    cursor.execute("SELECT F.USN,ST.FIRST_NAME,ST.LAST_NAME,F.PHASE_NO,SC.PHASE_DESC,T.SUB_STATUS FROM FILE_SUB AS F,STUDENT AS ST,TRANSACTIONS AS T,SCHEDULE AS SC,GUIDE AS G WHERE F.USN = ST.USN AND F.PHASE_NO = SC.PHASE_NO AND T.SUB_ID = F.SUB_ID AND G.USN = ST.USN AND G.EMAIL = 'amit@rvce.edu.in';")
+    unchecked = cursor.fetchall()
+    return render(request, 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/unchecked_view_assignment.html', {'unchecked_view_data': unchecked})
+
+
+def edit_marks_allot(request,id):
+    m = mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+    cursor = m.cursor()
+    print(id)
+    cursor.execute("SELECT F.SUB_ID FROM FILE_SUB AS F WHERE F.SUB_ID = {}".format(id))
+    sub_id = cursor.fetchall()
+    print(list(sub_id))
+    return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/add_result.html",{'id' : sub_id})
+
+def marks_allot_update(request,id):
+        if request.method == "GET":
+         m = mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+         cursor = m.cursor()
+         print(id)
+         cursor.execute("SELECT F.SUB_ID FROM FILE_SUB AS F WHERE F.SUB_ID = {}".format(id))
+         sub_id = cursor.fetchall()
+         print(list(sub_id))
+         return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/add_result.html",{'id' : sub_id})   
+        elif request.method == "POST":
+         print("YES")
+         m=mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+         cursor=m.cursor()
+         d=request.POST
+         for key,value in d.items():
+            if key == 'sub_id':
+                 id = d.get('sub_id')
+            if key == 'usn':
+                usn_no = d.get('usn')
+            if key == 'rubric_1_marks':
+                rub_1 = d.get('rubric_1_marks')
+            if key == 'rubric_1_marks':
+                rub_2 = d.get('rubric_2_marks')
+            if key == 'rubric_1_marks':
+                rub_3 = d.get('rubric_3_marks')
+         try:
+          panel_allot_str = "INSERT INTO EVALUATE_RESULT VALUES ({},'{}',{},{},{});".format(id,usn_no,rub_1,rub_2,rub_3)
+          cursor.execute(panel_allot_str)
+          m.commit()
+          m.close()
+          messages.success(request,"Details Entered Successfully!")   # redirect(update_student_update_table)
+         except:
+            messages.error(request,"Error")
+        return assign_marks_render(request) 
+
+def assign_marks_render(request):
+    return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/add_result.html")
+
+def delete_student(request,id):
+    if request.method == 'POST':
+        delete_str = "DELETE FROM STUDENT WHERE USN = '{}'".format(id)
+        m = mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+        cursor = m.cursor()
+        cursor.execute(delete_str)
+        m.commit()
+        m.close()
+    update_render =  update_student_update_table(request)
+    return update_render

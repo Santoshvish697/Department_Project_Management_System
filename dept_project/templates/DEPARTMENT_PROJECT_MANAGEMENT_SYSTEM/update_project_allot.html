@@ -1,0 +1,57 @@
+{% extends 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/base_admin_template.html' %}
+{% block page_title %}
+Update Panel Allot
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-12">
+            <!-- general form elements -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Update Project Panel Allot</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+              <form role="form" action="/project_allot_update/" method="post">
+                  {% csrf_token %}
+                <div class="card-body">
+                  {% for item in project_allotment %}
+                  <div class="form-group">
+                    <label>Project ID:</label>
+                    <input type="text" class="form-control" name="project_id" value="{{ item.0 }}" placeholder="{{ item.0 }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Project Name:</label>
+                        <input type="text" class="form-control" name="project_name" value="{{ item.1 }}" placeholder="{{ item.1 }}" required>
+                    </div>
+                   <div class="form-group">
+                    <label>PANEL_ID:</label>
+                    <input type="text" class="form-control" name="panel_id" value="{{ item.2 }}" placeholder="{{ item.2 }}" required>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+                <a><button type="submit" name = "update_panel_allot_btn" class="btn btn-primary btn-block">Update Panel Allot</button></a>
+              </form>
+          </div>
+          <div class="form-group">
+            {% if messages %}
+              {% for message in messages %}
+              {% if message.tags == 'error' %}
+              <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
+              {% endif %}
+              {% if message.tags == 'success' %}
+              <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
+              {% endif %}
+              {% endfor %}
+            {% endif %}
+          </div>
+          </div>
+      </div>
+    </section>
+    <!-- /.content -->
+{% endblock main_content %}
+

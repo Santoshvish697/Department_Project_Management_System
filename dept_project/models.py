@@ -63,7 +63,7 @@ class phase_allot(models.Model):
         db_table = 'PHASE_ALLOT'
 
 class file_submit(models.Model):
-    sub_id = models.AutoField(primary_key=True,default = 100)
+    sub_id = models.IntegerField(primary_key=True,default = 100)
     usn = models.CharField(max_length=25,default= "1RV20IS000")
     phase_no = models.IntegerField(default = 1) 
     file = models.FileField(upload_to="dept_project/static/DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/upload/") 
@@ -110,3 +110,10 @@ class panel_allot(models.Model):
         db_table = 'PANEL_ALLOT'
 
    
+class EvaluateResult(models.Model):
+    sub_id = models.IntegerField(default = 0)  #foreign key attribute
+    usn = models.CharField(max_length = 25,default = "1RV20IS000")
+    # subject_exam_marks=models.FloatField(default=0)
+    rubric_1_marks = models.IntegerField(default=0)
+    rubric_2_marks = models.IntegerField(default=0)
+    rubric_3_marks = models.IntegerField(default=0)

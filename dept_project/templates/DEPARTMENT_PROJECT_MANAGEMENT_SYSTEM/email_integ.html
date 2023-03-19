@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <body>
+        <header style="text-align:center;"> <h1>Send Email </h1>
+            <hr>
+            <div style="text-align:center;">
+                <h4>Contact Client</h4>
+                <form method="POST" action="{% url 'email_feature' %}">
+                    {% csrf_token %}
+                    <input type="text" name="name" placeholder="Title of the email" required>
+                    <br>
+                    <br>
+                    <input type="email" name="email" placeholder="The company Email address" required>
+                    <br>
+                    <br>
+                    <textarea name="message" placeholder="Message to be deliverd" required>
+                    </textarea>
+                    <br>
+                    <br>
+                    <button class="btn btn-primary mt-2" type="submit">Send</button>   
+                    <br>
+                    <br>
+                </form>
+            </div>
+    </body>
+</html>

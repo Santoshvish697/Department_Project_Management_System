@@ -153,21 +153,27 @@
                     <table class="table">
                         <thead class="thead-dark"> 
                           <tr>
-                            <th scope="col">Student USN</th>
-                            <th scope="col">Student First Name</th>
-                            <th scope = "col">Student Last Name</th>
-                            <th scope = "col">Project Name</th>
-                            <th scope = "col">Project Domain</th>
+                            <th scope = "col">Submission ID</th>
+                            <th scope="col">USN</th>
+                            <th scope="col">First Name</th>
+                            <th scope = "col">Last Name</th>
+                            <th scope = "col">Phase No.</th>
+                            <th scope = "col">Phase Desc</th>
+                            <th scope = "col">Submission Status</th>
+                            <th scope = "col">Action</th>
                           </tr>
                         </thead>
                         <tbody>
                             {% for item in teacher_data %}
                           <tr>
-                            <td>{{ item.0}}</td>
+                            <td>{{ item.0 }}</td>
                             <td>{{ item.1 }}</td>
                             <td>{{ item.2}}</td>
                             <td>{{ item.3 }}</td>
                             <td>{{ item.4 }}</td>
+                            <td>{{ item.5 }}</td>
+                            <td>{{ item.6 }}</td>
+                            <td><a href = "/add_result_render/{{item.0}}">Update</a></td>
                           </tr>
                           {% endfor %}
                         </tbody>
