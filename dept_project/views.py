@@ -138,7 +138,7 @@ def teacher_dashboard(request):
 def teacher_table_render(request):
     m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
     cursor=m.cursor()
-    cursor.execute("SELECT F.SUB_ID,F.USN,ST.FIRST_NAME,ST.LAST_NAME,F.PHASE_NO,SC.PHASE_DESC,T.SUB_STATUS FROM FILE_SUB AS F,STUDENT AS ST,TRANSACTIONS AS T,SCHEDULE AS SC,GUIDE AS G WHERE F.USN = ST.USN AND F.PHASE_NO = SC.PHASE_NO AND T.SUB_ID = F.SUB_ID AND G.USN = ST.USN AND G.EMAIL = 'amit@rvce.edu.in';;")
+    cursor.execute("SELECT F.SUB_ID,F.USN,ST.FIRST_NAME,ST.LAST_NAME,F.PHASE_NO,SC.PHASE_DESC,T.SUB_STATUS,F.FILE FROM FILE_SUB AS F,STUDENT AS ST,TRANSACTIONS AS T,SCHEDULE AS SC,GUIDE AS G WHERE F.USN = ST.USN AND F.PHASE_NO = SC.PHASE_NO AND T.SUB_ID = F.SUB_ID AND G.USN = ST.USN AND G.EMAIL = 'amit@rvce.edu.in';;")
     teacher_data = cursor.fetchall()
     print(teacher_data)
     return render(request, 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/teachers_dashboard.html', {'teacher_data': teacher_data})
@@ -648,7 +648,10 @@ def submit_render(request):
 submission_obj = SubmitForm(instance=file_submit)
 
 def upload_file(request):
+    trans_id = 11004
     if request.method == 'POST':
+        m = mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+        cursor = m.cursor()
         form = SubmitForm(request.POST, request.FILES)
         if form.is_valid():
             try:
@@ -656,6 +659,18 @@ def upload_file(request):
              submission_obj = form.save(commit=False)
              messages.success(request,"Updated Record Successfully")
              submission_obj.save()
+             sub_id = form.cleaned_data.get('sub_id')
+             print(sub_id)
+             trans_id = trans_id+1
+             submitted_at = datetime.today().strftime('%Y-%m-%d')
+             print(submitted_at)
+             #INSERT INTO TRANSACTIONS VALUES  (11004,10042,'2023-03-21','ONTIME');
+             sql_insert = "INSERT INTO TRANSACTIONS VALUES ({},{},'{}','{}');".format(trans_id,sub_id,submitted_at,'ONTIME')
+             print(sql_insert)
+             cursor.execute(sql_insert)
+             m.commit()
+             m.close()
+             
             except:
              messages.error(request,"Failed to upload file")
     else:
@@ -686,12 +701,12 @@ def edit_unchecked_submission(request,id):
 
 def update_file(request,id):
     files = file_submit.objects.get(sub_id = id)
-    print(files)
+    print(files.usn)
     if request.method == 'POST':
         form = SubmitForm(request.POST, request.FILES,instance=files)
         if form.is_valid():
             doc_file = request.FILES
-            file_instance = file_submit(file=doc_file['file'],sub_id = id)
+            file_instance = file_submit(file=doc_file['file'],sub_id = id,usn = files.usn,phase_no = files.phase_no)
             print(file_instance)
             try:
              file_instance.save()
@@ -813,18 +828,20 @@ def edit_marks_allot(request,id):
     sub_id = cursor.fetchall()
     print(list(sub_id))
     return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/add_result.html",{'id' : sub_id})
-
+guide_id = '1200'
 def marks_allot_update(request,id):
+        global guide_id
         if request.method == "GET":
          m = mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
          cursor = m.cursor()
-         print(id)
+         select_query = "SELECT DISTINCT GUIDE_ID FROM GUIDE AS G, DELIVERABLE_PROJECT AS D, STUDENT AS S, FILE_SUB AS F WHERE G.PROJECT_ID = D.PROJECT_ID AND G.USN = F.USN AND G.USN = S.USN AND F.SUB_ID = {};".format(id)
+         cursor.execute(select_query)
+         guide_id = list(cursor.fetchall())[0][0]
          cursor.execute("SELECT F.SUB_ID FROM FILE_SUB AS F WHERE F.SUB_ID = {}".format(id))
          sub_id = cursor.fetchall()
-         print(list(sub_id))
+        #  print(list(sub_id))
          return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/add_result.html",{'id' : sub_id})   
         elif request.method == "POST":
-         print("YES")
          m=mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
          cursor=m.cursor()
          d=request.POST
@@ -840,7 +857,10 @@ def marks_allot_update(request,id):
             if key == 'rubric_1_marks':
                 rub_3 = d.get('rubric_3_marks')
          try:
-          panel_allot_str = "INSERT INTO EVALUATE_RESULT VALUES ({},'{}',{},{},{});".format(id,usn_no,rub_1,rub_2,rub_3)
+          print("YES")
+          print(rub_1,rub_2,rub_3)
+          panel_allot_str = "INSERT INTO EVALUATE_RESULT VALUES ({},'{}',{},{},{},'{}');".format(id,usn_no,rub_1,rub_2,rub_3,guide_id)
+          print(panel_allot_str)
           cursor.execute(panel_allot_str)
           m.commit()
           m.close()

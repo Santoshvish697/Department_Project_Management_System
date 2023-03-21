@@ -112,8 +112,10 @@ class panel_allot(models.Model):
    
 class EvaluateResult(models.Model):
     sub_id = models.IntegerField(default = 0)  #foreign key attribute
+    
     usn = models.CharField(max_length = 25,default = "1RV20IS000")
     # subject_exam_marks=models.FloatField(default=0)
     rubric_1_marks = models.IntegerField(default=0)
     rubric_2_marks = models.IntegerField(default=0)
     rubric_3_marks = models.IntegerField(default=0)
+    guide_no = models.CharField(default = '1200',max_length=25)
