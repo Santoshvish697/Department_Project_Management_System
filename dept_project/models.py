@@ -67,6 +67,7 @@ class file_submit(models.Model):
     usn = models.CharField(max_length=25,default= "1RV20IS000")
     phase_no = models.IntegerField(default = 1) 
     file = models.FileField(upload_to="dept_project/static/DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/upload/") 
+    eval = models.BooleanField(default=False)
     class Meta:
         db_table = 'FILE_SUB'
     
@@ -118,4 +119,5 @@ class EvaluateResult(models.Model):
     rubric_1_marks = models.IntegerField(default=0)
     rubric_2_marks = models.IntegerField(default=0)
     rubric_3_marks = models.IntegerField(default=0)
+    result = models.IntegerField(default=0)
     guide_no = models.CharField(default = '1200',max_length=25)

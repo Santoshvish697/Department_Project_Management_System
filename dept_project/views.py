@@ -214,7 +214,7 @@ def teacher_form(request):
 def show_table(request):
     m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
     cursor=m.cursor()
-    cursor.execute("SELECT F.SUB_ID,F.USN,ST.FIRST_NAME,ST.LAST_NAME,F.PHASE_NO,SC.PHASE_DESC,T.SUB_STATUS FROM FILE_SUB AS F,STUDENT AS ST,TRANSACTIONS AS T,SCHEDULE AS SC,GUIDE AS G WHERE F.USN = ST.USN AND F.PHASE_NO = SC.PHASE_NO AND T.SUB_ID = F.SUB_ID AND G.USN = ST.USN AND ST.EMAIL = '{}';".format(login_obj.email))
+    cursor.execute("SELECT F.SUB_ID,F.PHASE_NO,SC.PHASE_DESC,E.RESULT FROM FILE_SUB AS F,SCHEDULE AS SC,TRANSACTIONS AS T,EVALUATE_RESULT AS E,STUDENT AS ST WHERE F.USN = ST.USN AND F.PHASE_NO = SC.PHASE_NO AND T.SUB_ID = F.SUB_ID AND E.SUB_ID = F.SUB_ID AND ST.EMAIL = '{}';".format(login_obj.email))
     data = cursor.fetchall()
     return render(request, 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/stud_dashboard.html', {'data': data})
 
@@ -501,6 +501,16 @@ def update_student(request):
             messages.error(request,"Error")
     return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/update_student_form.html")
 
+def delete_student(request,id):
+    if request.method == "GET":
+        m=mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+        cursor=m.cursor()
+        delete_str = "DELETE FROM STUDENT WHERE USN = '{}'".format(id)
+        cursor.execute(delete_str)
+        m.commit()
+        m.close()
+    delete_render = update_student_update_table(request)
+    return delete_render
 
 def edit_panel_allot(request,id):
     m = mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
@@ -683,7 +693,7 @@ def upload_file(request):
 def unchecked_table_render(request):
     m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
     cursor=m.cursor()
-    cursor.execute("SELECT F.SUB_ID,S.PHASE_NO,S.PHASE_DESC,T.SUBMITTED_AT FROM SCHEDULE AS S,TRANSACTIONS AS T,FILE_SUB AS F,PHASE_ALLOT AS PA, DELIVERABLE_PROJECT AS D WHERE S.PHASE_NO = F.PHASE_NO AND T.SUB_ID = PA.PHASE_ID AND F.USN = D.USN AND T.SUB_ID = F.SUB_ID;")
+    cursor.execute("SELECT F.SUB_ID,S.PHASE_NO,S.PHASE_DESC,T.SUBMITTED_AT FROM SCHEDULE AS S,TRANSACTIONS AS T,FILE_SUB AS F,PHASE_ALLOT AS PA, DELIVERABLE_PROJECT AS D WHERE S.PHASE_NO = F.PHASE_NO AND T.SUB_ID = PA.PHASE_ID AND F.USN = D.USN AND T.SUB_ID = F.SUB_ID AND F.EVAL = FALSE;")
     unchecked = cursor.fetchall()
     return render(request, 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/unchecked_view_assignment.html', {'unchecked_view_data': unchecked})
 
@@ -857,11 +867,10 @@ def marks_allot_update(request,id):
             if key == 'rubric_1_marks':
                 rub_3 = d.get('rubric_3_marks')
          try:
-          print("YES")
-          print(rub_1,rub_2,rub_3)
-          panel_allot_str = "INSERT INTO EVALUATE_RESULT VALUES ({},'{}',{},{},{},'{}');".format(id,usn_no,rub_1,rub_2,rub_3,guide_id)
-          print(panel_allot_str)
+          avg = rub_1 + rub_2 + rub_3
+          panel_allot_str = "INSERT INTO EVALUATE_RESULT VALUES ({},'{}',{},{},{},'{}',{});".format(id,usn_no,rub_1,rub_2,rub_3,guide_id,avg)
           cursor.execute(panel_allot_str)
+          update_str = "UPDATE FILE_SUB SET EVAL = TRUE WHERE SUB_ID = '{}'".format(id)
           m.commit()
           m.close()
           messages.success(request,"Details Entered Successfully!")   # redirect(update_student_update_table)
@@ -871,14 +880,3 @@ def marks_allot_update(request,id):
 
 def assign_marks_render(request):
     return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/add_result.html")
-
-def delete_student(request,id):
-    if request.method == 'POST':
-        delete_str = "DELETE FROM STUDENT WHERE USN = '{}'".format(id)
-        m = mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
-        cursor = m.cursor()
-        cursor.execute(delete_str)
-        m.commit()
-        m.close()
-    update_render =  update_student_update_table(request)
-    return update_render

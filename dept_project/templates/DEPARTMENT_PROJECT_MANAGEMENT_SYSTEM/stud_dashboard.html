@@ -23,16 +23,16 @@ View Submissions
                         <th scope="col">Submission_ID</th>
                         <th scope="col">Phase_No.</th>
                         <th scope="col">Phase_Description</th>
-                        <th scope="col">Grade</th>
+                        <th scope="col">Marks</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                         {% for item in data%}
                         <td>{{ item.0 }}</td>
-                        <td>{{ item.4 }}</td>
-                        <td>{{ item.5 }}</td>
-                        <td><a href = "#">20</a></td>
+                        <td>{{ item.1 }}</td>
+                        <td>{{ item.2 }}</td>
+                        <td>{{ item.3 }}</a></td>
                         </tr>
                         {% endfor %}
                     </tbody>

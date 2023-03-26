@@ -40,6 +40,7 @@ urlpatterns = [
     path('email_feature/',views.email,name = "email_feature"),
     path('guide_add_render/',views.guide_add_render,name = "guide_add"),
     path('add_result_render/<int:id>',views.marks_allot_update,name= "assign_result"),
-    path('update_result/',views.marks_allot_update,name = "update_result")
+    path('update_result/',views.marks_allot_update,name = "update_result"),
+    path('delete_student/<int:id>',views.delete_student,name = "delete_student")
     # path('update_student_details/<int:id>',dept_project.views.student_update,name = "student_update")
 ]
