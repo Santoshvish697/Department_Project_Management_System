@@ -880,3 +880,33 @@ def marks_allot_update(request,id):
 
 def assign_marks_render(request):
     return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/add_result.html")
+
+def show_grade_table(request):
+    m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+    cursor=m.cursor()
+    cursor.execute("SELECT SC.PHASE_NO,SC.PHASE_DESC,E.RESULT FROM SCHEDULE AS SC,EVALUATE_RESULT AS E,FILE_SUB AS F,STUDENT AS S,USERS AS U WHERE SC.PHASE_NO = F.PHASE_NO AND E.SUB_ID = F.SUB_ID AND F.USN = S.USN AND S.EMAIL = U.EMAIL AND U.EMAIL = '{}' ORDER BY SC.PHASE_NO;".format(login_obj.email))
+    data = cursor.fetchall()
+    print(data)
+    return render(request, 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/view_grade.html', {'grade_data': data})
+
+def show_sum(request):
+    m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
+    cursor=m.cursor()
+    sql_f_query = "SELECT SC.PHASE_NO,SC.PHASE_DESC,E.RESULT FROM SCHEDULE AS SC,EVALUATE_RESULT AS E,FILE_SUB AS F,STUDENT AS S,USERS AS U WHERE SC.PHASE_NO = F.PHASE_NO AND E.SUB_ID = F.SUB_ID AND F.USN = S.USN AND S.EMAIL = U.EMAIL AND U.EMAIL = '{}' ORDER BY SC.PHASE_NO;".format(login_obj.email)
+    cursor.execute(sql_f_query)
+    table_data = cursor.fetchall()
+    print(table_data)
+    sql_query = "SELECT round(SUM(E.RESULT)/COUNT(E.RESULT)) FROM SCHEDULE AS SC,EVALUATE_RESULT AS E,FILE_SUB AS F,STUDENT AS S,USERS AS U WHERE SC.PHASE_NO = F.PHASE_NO AND E.SUB_ID = F.SUB_ID AND F.USN = S.USN AND S.EMAIL = U.EMAIL AND U.EMAIL = '{}';".format(login_obj.email)
+    cursor.execute(sql_query)
+    data = cursor.fetchall()
+    print("Sum = {}".format(data))
+    return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/view_grade.html",{"table" : table_data,"grade": data})
+    
+
+def view_grade(request):
+    dashboard_render = render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/view_grade.html")
+    if (dashboard_render != None):
+            show_render = show_sum(request)
+            if (show_render != None):
+                return show_render
+    return show_render
