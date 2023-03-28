@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-wnjfg6w1p36b8*ajw4adg0oozdaymp)rt+-&69w0bvwu!7e8gn"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'pritishraj11013@gmail.com'
@@ -33,7 +33,11 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
+<<<<<<< HEAD
 ALLOWED_HOSTS = ['santoshvish.pythonanywhere.com']
+=======
+ALLOWED_HOSTS = []
+>>>>>>> e590972472717f4abbe718fc05fec51f8fcbfad3
 
 
 # Application definition
@@ -45,7 +49,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "dept_project"
+    "dept_project",
 ]
 
 MIDDLEWARE = [
@@ -132,7 +136,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
+<<<<<<< HEAD
 STATIC_URL = '/staticfiles/'
+=======
+STATIC_URL = '/dept_project/static/'
+>>>>>>> e590972472717f4abbe718fc05fec51f8fcbfad3
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
