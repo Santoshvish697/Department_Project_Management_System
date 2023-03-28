@@ -1,0 +1,11 @@
+1. Stakeholders - Teachers - to upload marks + conduct regular pop quizzes + update attendance status if present on daily basis [manual or biometric]
+		Students - To get notes - PDF, PPT, Word docx of unitwise notes, PYQs, everyday attendance status [real-time attendance percentage]
+		Parents -  To know attendance status of students monthly sent on respective emails + SMS test results - CIE - 1,2,3
+		
+2.  Features - 
+	1. To select subject and option to upload notes for the subject + get notes uploaded for the subject
+	2.  To get teacher notes sent for the subject
+	3. To get update on timetable for the subject - reminder each hour which class you have - linked with google calendar/API
+	4. Teachers can enter marks secured for the subject and respective counsellor notified only after all faculty uploaded their marks and have respectice privilege to send mail to respective parents
+	by mail with marks and attendance status on monthly basis - no escape route for the student ://
+	5.
