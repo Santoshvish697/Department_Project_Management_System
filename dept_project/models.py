@@ -13,10 +13,8 @@ class student_input(models.Model):
     fname = models.CharField(max_length=25)
     mname = models.CharField(max_length=25)
     lname = models.CharField(max_length=25)
-    email = models.ForeignKey(users,on_delete=models.CASCADE)
+    email = models.CharField(max_length=25)
     Phone_no = models.CharField(max_length=15,default=0000000000)
-    class Meta:
-        db_table="STUDENT"
 
 class panel_members(models.Model):
     panel_id = models.IntegerField(primary_key=True)

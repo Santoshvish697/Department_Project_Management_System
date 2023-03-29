@@ -138,7 +138,7 @@ def teacher_dashboard(request):
 def teacher_table_render(request):
     m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
     cursor=m.cursor()
-    cursor.execute("SELECT F.SUB_ID,F.USN,ST.FIRST_NAME,ST.LAST_NAME,F.PHASE_NO,SC.PHASE_DESC,T.SUB_STATUS,F.FILE FROM FILE_SUB AS F,STUDENT AS ST,TRANSACTIONS AS T,SCHEDULE AS SC,GUIDE AS G WHERE F.USN = ST.USN AND F.PHASE_NO = SC.PHASE_NO AND T.SUB_ID = F.SUB_ID AND G.USN = ST.USN AND G.EMAIL = 'amit@rvce.edu.in';;")
+    cursor.execute("SELECT F.SUB_ID,F.USN,ST.FIRST_NAME,ST.LAST_NAME,F.PHASE_NO,SC.PHASE_DESC,T.SUB_STATUS,F.FILE FROM FILE_SUB AS F,STUDENT AS ST,TRANSACTIONS AS T,SCHEDULE AS SC,GUIDE AS G WHERE F.USN = ST.USN AND F.PHASE_NO = SC.PHASE_NO AND T.SUB_ID = F.SUB_ID AND G.USN = ST.USN AND G.EMAIL = 'amit@rvce.edu.in' AND F.EVAL = FALSE;")
     teacher_data = cursor.fetchall()
     print(teacher_data)
     return render(request, 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/teachers_dashboard.html', {'teacher_data': teacher_data})
@@ -150,22 +150,24 @@ def student_form(request):
         cursor=m.cursor()
         d=request.POST
         print("Inserting the values...")
-        saverecord = student_input()
+        saverec = student_input()
         for key,value in d.items():
             if key == 'usn':
-                saverecord.usn = d.get('usn')
+                saverec.usn = d.get('usn')
             if key == 'first-name':
-                saverecord.fname = d.get('first-name')
+                saverec.fname = d.get('first-name')
             if key == 'middle-name':
-                saverecord.mname = d.get('middle-name')
+                saverec.mname = d.get('middle-name')
             if key == 'last-name':
-                saverecord.lname = d.get('last-name')
+                saverec.lname = d.get('last-name')
             if key == 'email':
-                saverecord.email = d.get('email')
+                saverec.email = d.get('email')
             if key == 'phone':
-                saverecord.phone_no = d.get('phone')
+                saverec.Phone_no = d.get('phone')
+        
+        insert_str = "INSERT INTO STUDENT (USN,First_Name,Middle_Name,Last_Name,Email,Phone_no) VALUES ('{}','{}','{}','{}','{}','{}')".format(saverec.usn,saverec.fname,saverec.mname,saverec.lname,saverec.email,saverec.Phone_no)
+        print(insert_str)
         try:
-            insert_str = "INSERT INTO STUDENT (USN,First_Name,Middle_Name,Last_Name,Email,Phone_no) VALUES ('{}','{}','{}','{}','{}','{}')".format(saverecord.usn,saverecord.fname,saverecord.mname,saverecord.lname,saverecord.email,saverecord.phone_no)
             cursor.execute(insert_str)
             m.commit()
             m.close()
@@ -180,49 +182,19 @@ def add_student_render(request):
 def form_view(request):
     return render(request,'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/update_student_detail.html')
 
-def teacher_form(request):
-    if request.method == 'POST':
-        m=mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
-        print("Connecting........")
-        cursor=m.cursor()
-        d=request.POST
-        guide_obj = guide()
-        print("Inserting the values...")
-        for key,value in d.items():
-            if key == 'en_no':
-                guide_obj.Guide_ID = d.get('enroll_no')
-            if key == 'first-name':
-                guide_obj.fname = d.get('first-name')
-            if key == 'middle-name':
-                guide_obj.mname = d.get('middle-name')
-            if key == 'last-name':
-                guide_obj.lname = d.get('last-name')
-            if key == 'email':
-                guide_obj.email = d.get('email')
-            if key == 'phone':
-                guide_obj.phone_no = d.get('phone')
-        try:
-            insert_str = "INSERT INTO GUIDE (GUIDE_ID,First_Name,Middle_Name,Last_Name,Email,Phone_no) VALUES ('{}','{}','{}','{}','{}','{}')".format(guide_obj.usn,guide_obj.fname,guide_obj.mname,guide_obj.lname,guide_obj.email,guide_obj.phone_no)
-            cursor.execute(insert_str)
-            m.commit()
-            m.close()
-            messages.success(request,"Details Entered Successfully!")
-        except:
-            messages.error(request,"Response Already Recorded or Email Not Registered!")
-    return teacher_form_render(request)
-
 def show_table(request):
     m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
     cursor=m.cursor()
-    cursor.execute("SELECT F.SUB_ID,F.PHASE_NO,SC.PHASE_DESC,E.RESULT FROM FILE_SUB AS F,SCHEDULE AS SC,TRANSACTIONS AS T,EVALUATE_RESULT AS E,STUDENT AS ST WHERE F.USN = ST.USN AND F.PHASE_NO = SC.PHASE_NO AND T.SUB_ID = F.SUB_ID AND E.SUB_ID = F.SUB_ID AND ST.EMAIL = '{}';".format(login_obj.email))
+    cursor.execute("SELECT DISTINCT F.SUB_ID,F.PHASE_NO,SC.PHASE_DESC,E.RESULT FROM FILE_SUB AS F,SCHEDULE AS SC,TRANSACTIONS AS T,EVALUATE_RESULT AS E,STUDENT AS ST WHERE F.USN = ST.USN AND F.PHASE_NO = SC.PHASE_NO AND T.SUB_ID = F.SUB_ID AND E.SUB_ID = F.SUB_ID AND ST.EMAIL = '{}';".format(login_obj.email))
     data = cursor.fetchall()
+    print(data)
     return render(request, 'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/stud_dashboard.html', {'data': data})
 
 
 def update_project_details(request):
     m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
     cursor = m.cursor()
-    cursor.execute("SELECT D.PROJECT_TITLE,D.PROJECT_DOMAIN,G.FIRST_NAME,G.LAST_NAME FROM DELIVERABLE_PROJECT AS D,STUDENT AS S,USERS AS U,PANEL_ALLOT AS P,GUIDE AS G WHERE D.USN = S.USN AND S.EMAIL = U.EMAIL AND D.PANEL_ID = P.PANEL_ID AND G.GUIDE_ID = P.GUIDE_ID AND U.EMAIL = '{}';".format(login_obj.email))
+    cursor.execute("SELECT D.PROJECT_TITLE,D.PROJECT_DOMAIN,G.FIRST_NAME,G.LAST_NAME FROM DELIVERABLE_PROJECT AS D,STUDENT AS S,USERS AS U,GUIDE_ALLOT AS GA,GUIDE AS G WHERE D.USN = S.USN AND S.EMAIL = U.EMAIL AND D.PANEL_ID = GA.PANEL_ID AND G.GUIDE_ID = GA.ID AND U.EMAIL = '{}';".format(login_obj.email))
     title = cursor.fetchall()
     print(title)
     return render(request,'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/stud_dashboard.html',{'title': title})
@@ -354,7 +326,7 @@ def update_stud(request,id):
 def panel_member_render(request):
     m=sql.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
     cursor = m.cursor()
-    cursor.execute("SELECT * FROM PANEL_MEMBERS;")
+    cursor.execute("SELECT STUD_PANEL_ALLOT_NUM,PANEL_ID,USN FROM PANEL_MEMBERS WHERE USN IS NOT NULL;")
     panel_name = cursor.fetchall()
     return render(request,'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/panel_allotment.html',{'panel_allot': panel_name})
 
@@ -516,24 +488,29 @@ def edit_panel_allot(request,id):
     m = mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
     cursor = m.cursor()
     print(id)
-    cursor.execute("SELECT PANEL_ID,USN FROM PANEL_MEMBERS WHERE USN = '{}';".format(id))
+    cursor.execute("SELECT STUD_PANEL_ALLOT_NUM,PANEL_ID,USN FROM PANEL_MEMBERS WHERE STUD_PANEL_ALLOT_NUM = {};".format(id))
     panel_details = cursor.fetchall()
     print(list(panel_details))
     return render(request,"DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/update_panel_allot.html",{'panel_allotment' : panel_details})
 
 def panel_allot_update(request):
     if request.method == "POST":
-        print("YES")
         m=mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
         cursor=m.cursor()
         d=request.POST
         for key,value in d.items():
+            print(key)
+            if key == 'stud_panel':
+                stud_allot_num = d.get('stud_panel')
+                print(stud_allot_num)
             if key == 'panel_id':
                 pan_no = d.get('panel_id')
             if key == 'usn':
-                usn_no = d.get('usn')
+                usn_no = d.get('usn')     
         try:
-            panel_allot_str = "UPDATE STUDENT SET PANEL_ID = '{}' WHERE USN = '{}';".format(pan_no,usn_no)
+            print(stud_allot_num)
+            panel_allot_str = "UPDATE PANEL_MEMBERS SET USN = '{}',PANEL_ID = {} WHERE STUD_PANEL_ALLOT_NUM = {};".format(usn_no,pan_no,stud_allot_num)
+            print(panel_allot_str)
             cursor.execute(panel_allot_str)
             m.commit()
             m.close()
@@ -658,7 +635,7 @@ def submit_render(request):
 submission_obj = SubmitForm(instance=file_submit)
 
 def upload_file(request):
-    trans_id = 11004
+    trans_id = 11007
     if request.method == 'POST':
         m = mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
         cursor = m.cursor()
@@ -733,6 +710,7 @@ def panel_project_render(request):
     cursor = m.cursor()
     cursor.execute("SELECT PROJECT_ID,PROJECT_TITLE,PANEL_ID FROM DELIVERABLE_PROJECT;")
     panel_name = cursor.fetchall()
+    print(panel_name)
     return render(request,'DEPARTMENT_PROJECT_MANAGEMENT_SYSTEM/project_panel_allotment.html',{'panel_project_allot': panel_name})
 
   
@@ -759,7 +737,9 @@ def panel_project_update(request):
             if key == 'panel_id':
                 panel_no = d.get('panel_id')
         try:
-            panel_allot_str = "UPDATE DELIVERABLE_PROJECT SET PANEL_ID = {} WHERE PROJECT_ID = {};".format(proj_no,panel_no)
+            print(proj_title)
+            panel_allot_str = "UPDATE DELIVERABLE_PROJECT SET PANEL_ID = {},PROJECT_TITLE = '{}' WHERE PROJECT_ID = {};".format(panel_no,proj_title,proj_no)
+            print(panel_allot_str)
             cursor.execute(panel_allot_str)
             m.commit()
             m.close()
@@ -790,7 +770,6 @@ def edit_guide(request,id):
 
 def guide_add_render(request):
     if request.method == "POST":
-        print("YES")
         m=mysql.connector.connect(host="127.0.0.1",user="root",passwd="root",database='dept_project')
         cursor=m.cursor()
         d=request.POST
@@ -799,7 +778,7 @@ def guide_add_render(request):
                 id = d.get('guide_id')
             if key == 'fname':
                 first = d.get('fname')
-            if key == 'fname':
+            if key == 'mname':
                 middle = d.get('mname')
             if key == 'lname':
                 last = d.get('lname')
@@ -811,8 +790,9 @@ def guide_add_render(request):
                 project_id = d.get('project_id')
             if key == 'usn':
                 usn_no = d.get('usn')
+        guide_str = "INSERT INTO GUIDE(GUIDE_ID,FIRST_NAME,MIDDLE_NAME,LAST_NAME,EMAIL,PHONE_NO,PROJECT_ID,USN) VALUES ('{}','{}','{}','{}','{}','{}',{},'{}')".format(id,first,middle,last,email,phone_no,project_id,usn_no)
+        print(guide_str)
         try:
-            guide_str = "INSERT INTO GUIDE VALUES ('{}','{}','{}','{}','{}','{}',{},'{}')".format(id,first,middle,last,key,email,phone_no,project_id,usn_no)
             cursor.execute(guide_str)
             m.commit()
             m.close()
@@ -867,10 +847,11 @@ def marks_allot_update(request,id):
             if key == 'rubric_1_marks':
                 rub_3 = d.get('rubric_3_marks')
          try:
-          avg = rub_1 + rub_2 + rub_3
+          avg = int(rub_1) + int(rub_2) + int(rub_3)
           panel_allot_str = "INSERT INTO EVALUATE_RESULT VALUES ({},'{}',{},{},{},'{}',{});".format(id,usn_no,rub_1,rub_2,rub_3,guide_id,avg)
           cursor.execute(panel_allot_str)
-          update_str = "UPDATE FILE_SUB SET EVAL = TRUE WHERE SUB_ID = '{}'".format(id)
+          update_str = "UPDATE FILE_SUB SET EVAL = TRUE WHERE SUB_ID = {}".format(id)
+          cursor.execute(update_str)
           m.commit()
           m.close()
           messages.success(request,"Details Entered Successfully!")   # redirect(update_student_update_table)

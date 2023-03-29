@@ -15,6 +15,7 @@ Panel Allot
             <table class="table table-head-fixed text-nowrap">
             <thead>
                 <tr>
+                    <th>Student Panel Allot Num</th>
                 <th>Panel_ID</th>
                 <th>USN</th>
                 <th>Action</th>
@@ -25,7 +26,8 @@ Panel Allot
                 {% for item in panel_allot %}
                 <td>{{ item.0 }}</td>
                 <td>{{ item.1 }}</td>
-                <td><a href = "/edit_panel_allot/{{ item.1 }}"><button type="button" class="btn btn-danger" name = "update_student">Update</button></a></td>
+                <td>{{ item.2 }}</td>
+                <td><a href = "/edit_panel_allot/{{ item.0 }}"><button type="button" class="btn btn-danger" name = "update_student">Update</button></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

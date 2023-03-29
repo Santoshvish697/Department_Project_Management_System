@@ -20,12 +20,16 @@ Update Panel Allot
                 <div class="card-body">
                   {% for item in panel_allotment %}
                   <div class="form-group">
-                    <label>Panel ID:</label>
-                    <input type="text" class="form-control" name="panel_id" value="{{ item.0 }}" placeholder="{{ item.0 }}" required>
+                    <label>Student Panel Allotment Number:</label>
+                    <input type="text" class="form-control" name="stud_panel" value="{{ item.0 }}" placeholder="{{ item.0 }}" required>
+                    </div>
+                    <div class="form-group">
+                      <label>Panel ID:</label>
+                      <input type="text" class="form-control" name="panel_id" value="{{ item.1 }}" placeholder="{{ item.0 }}" required>
                     </div>
                    <div class="form-group">
                     <label>USN:</label>
-                    <input type="text" class="form-control" name="usn" value="{{ item.1 }}" placeholder="{{ item.1 }}" disabled>
+                    <input type="text" class="form-control" name="usn" value="{{ item.2 }}" placeholder="{{ item.1 }}" required>
                     </div>
                     {% endfor %}
                   </div>

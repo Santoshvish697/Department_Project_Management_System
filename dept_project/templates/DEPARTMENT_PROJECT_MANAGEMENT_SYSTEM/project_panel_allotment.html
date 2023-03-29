@@ -16,6 +16,7 @@ Project Panel Allotment
             <thead>
                 <tr>
                 <th>Project ID</th>
+                <th>Project Title</th>
                 <th>Panel ID</th>
                 <th>Action</th>
                 </tr>
@@ -25,6 +26,7 @@ Project Panel Allotment
                 {% for item in panel_project_allot %}
                 <td>{{ item.0 }}</td>
                 <td>{{ item.1 }}</td>
+                <td>{{ item.2 }}</td>
                 <td><a href = "/edit_project_allot/{{item.0}}"><button type="button" class="btn btn-danger" name = "update_student">Update</button></a></td>
                 </tr>
                 {% endfor %}
