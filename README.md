@@ -14,10 +14,4 @@ Framework - Django with MySQL DB
 1. Guide can track student performance status and can view latest submission made by the student for each phase of the project submission.
 2. Integrated Chatbot functionality to benefit guides to navigate the interface easily.
 
-## To make changes to the project
-1. Please find FINAL_DB_DEPLOY.sql file - This file contains all the SQL tables for the project
-In FINAL_DB_DEPLOY.sql file please go to line 482 - till here you already have the sql files
-2. From line 482 you have to run the SQL file for the new changes made [after lab exam]
-3. For Deployment - The complete SQL file has to be run on the deployment terminal
-
 
